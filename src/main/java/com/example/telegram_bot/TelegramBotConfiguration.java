@@ -1,5 +1,6 @@
 package com.example.telegram_bot;
 
+import com.example.telegram_bot.openai.OpenAIClient;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,10 +15,11 @@ public class TelegramBotConfiguration {
     @SneakyThrows
     public TelegramBot telegramBot(
             @Value("${bot.token}") String botToken,
-            TelegramBotsApi telegramBotsApi
+            TelegramBotsApi telegramBotsApi,
+            OpenAIClient openAIClient
     ){
         var botOption = new DefaultBotOptions();
-        var bot = new TelegramBot(botOption, botToken);
+        var bot = new TelegramBot(botOption, botToken, openAIClient);
         telegramBotsApi.registerBot(bot);
         return bot;
     }
