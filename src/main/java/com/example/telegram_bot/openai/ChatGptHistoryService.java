@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @AllArgsConstructor
-public class ChatGptHistory {
+public class ChatGptHistoryService {
 
     private final Map<Long, ChatHistory> chatHistoryMap = new ConcurrentHashMap<>();
 
@@ -21,6 +21,10 @@ public class ChatGptHistory {
 
     public void createHistory(Long userId){
         chatHistoryMap.put(userId, new ChatHistory(new ArrayList<>()));
+    }
+
+    public void clearHistory(Long userId){
+        chatHistoryMap.remove(userId);
     }
 
     public ChatHistory addMessageToHistory(Long userId,

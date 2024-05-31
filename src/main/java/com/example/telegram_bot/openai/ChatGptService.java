@@ -7,13 +7,11 @@ import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @AllArgsConstructor
 public class ChatGptService {
     private final OpenAIClient openAIClient;
-    private final ChatGptHistory chatGptHistory;
+    private final ChatGptHistoryService chatGptHistory;
 
 
     @Nonnull
