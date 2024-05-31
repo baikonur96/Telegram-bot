@@ -1,9 +1,12 @@
 package com.example.telegram_bot.command;
 
+
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
@@ -13,19 +16,19 @@ import java.util.List;
 public class TelegramCommandsDispatcher {
     private final List<TelegramCommandHandler> telegramCommandHandlerList;
 
-    public BotApiMethod<?> processCommand(Update update){
-        if (!isCommand(update)){
+    public BotApiMethod<?> processCommand(Message message){
+        if (!isCommand(message)){
             throw new IllegalArgumentException("Not a comand passed");
         }
 
-        var text = update.getMessage().getText();
+        var text = message.getText();
         var suitedHandler = telegramCommandHandlerList.stream()
                 .filter(it -> it.getSupportedCommand().getCommandValue().equals(text))
                 .findAny();
         if (suitedHandler.isEmpty()){
-            var chatId = update.getMessage().getChatId();
+            var chatId = message.getChatId();
             return SendMessage.builder()
-                    .chatId(update.getMessage().getChatId())
+                    .chatId(message.getChatId())
                     .text("NotSupported command: command=%s".formatted(text))
                     .build();
 //            var text = update.getMessage().getText();
@@ -34,13 +37,11 @@ public class TelegramCommandsDispatcher {
 //            SendMessage sendMessage = new SendMessage(chatId.toString(), gptGeneratedText);
 //            sendApiMethod(sendMessage);
         }
-        return suitedHandler.orElseThrow().processCommand(update);
+        return suitedHandler.orElseThrow().processCommand(message);
     }
 
-    public boolean isCommand(Update update){
-
-        return update.hasMessage()
-                && update.getMessage().hasText()
-                && update.getMessage().getText().startsWith("/");
+    public boolean isCommand(Message message){
+        return  message.hasText()
+                && message.getText().startsWith("/");
             }
 }
